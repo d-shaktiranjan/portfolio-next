@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { MobileEndpointSelector } from "@/components/mobile-endpoint-selector";
 
 const endpoints = [
   { href: "/", path: "/api/me", label: "Profile" },
@@ -13,6 +14,10 @@ export function EndpointNavigation({
 }) {
   return (
     <nav className="endpoint-navigation" aria-label="API endpoints">
+      <MobileEndpointSelector
+        activeEndpoint={activeEndpoint}
+        endpoints={endpoints}
+      />
       <p className="endpoint-navigation-title">
         Endpoints <span>{endpoints.length}</span>
       </p>

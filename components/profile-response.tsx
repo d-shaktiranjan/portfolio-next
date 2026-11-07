@@ -1,4 +1,3 @@
-import Link from "next/link";
 import type { Profile } from "@/lib/profile";
 
 export function ProfileResponse({ profile }: { profile: Profile }) {
@@ -43,40 +42,16 @@ export function ProfileResponse({ profile }: { profile: Profile }) {
             <a href={profile.links.email}>
               Email <span aria-hidden="true">↗</span>
             </a>
+            <a
+              href={profile.links.writing}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Blog <span aria-hidden="true">↗</span>
+            </a>
           </dd>
         </div>
       </dl>
-
-      <nav className="resource-links" aria-label="Explore my work">
-        <Link href={profile.links.projects}>
-          <span className="resource-icon" aria-hidden="true">
-            ⌁
-          </span>
-          <span>
-            Projects
-            <span className="resource-description">Things I’ve built</span>
-          </span>
-          <span className="resource-arrow" aria-hidden="true">
-            ↗
-          </span>
-        </Link>
-        <a
-          href={profile.links.writing}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <span className="resource-icon" aria-hidden="true">
-            ≡
-          </span>
-          <span>
-            Writing
-            <span className="resource-description">Notes from the backend</span>
-          </span>
-          <span className="resource-arrow" aria-hidden="true">
-            ↗
-          </span>
-        </a>
-      </nav>
 
       <p className="profile-note">
         A little more context?{" "}

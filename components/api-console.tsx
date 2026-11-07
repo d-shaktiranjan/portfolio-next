@@ -1,15 +1,13 @@
 "use client";
 
-import { useRef, useState, type ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import type { ApiResponse } from "@/lib/api";
 import { JsonCode } from "@/components/json-code";
 
 type ResponseView = "Preview" | "JSON" | "Headers";
 const views: ResponseView[] = ["Preview", "JSON", "Headers"];
-const requestHeaders = { Accept: "application/json" };
-const requestHeadersText = Object.entries(requestHeaders)
-  .map(([name, value]) => `${name.toLowerCase()}: ${value}`)
-  .join("\n");
+const requestHeadersText = "accept: application/json";
+const responseHeaders = "content-type: application/json";
 
 export function ApiConsole({
   endpoint,
@@ -21,60 +19,8 @@ export function ApiConsole({
   children: ReactNode;
 }) {
   const [view, setView] = useState<ResponseView>("Preview");
-  const [response, setResponse] = useState(
-    JSON.stringify(initialResponse, null, 2),
-  );
-  const [responseHeaders, setResponseHeaders] = useState(
-    "content-type: application/json",
-  );
-  const [status, setStatus] = useState("200 OK");
-  const [duration, setDuration] = useState<number | null>(null);
-  const [isSending, setIsSending] = useState(false);
+  const response = JSON.stringify(initialResponse, null, 2);
   const [feedback, setFeedback] = useState("");
-  const requestInFlight = useRef(false);
-
-  async function sendRequest() {
-    if (requestInFlight.current) return;
-    requestInFlight.current = true;
-    setIsSending(true);
-    setFeedback("");
-    // Keep the indicator perceptible even when the local endpoint responds instantly.
-    const minimumLoadingTime = new Promise<void>((resolve) => {
-      setTimeout(resolve, 300);
-    });
-
-    try {
-      const start = performance.now();
-      const result = await fetch(endpoint, {
-        headers: requestHeaders,
-        cache: "no-store",
-        signal: AbortSignal.timeout(10000),
-      });
-      const body = await result.json();
-      const elapsed = Math.round(performance.now() - start);
-      await minimumLoadingTime;
-      setDuration(elapsed);
-      setStatus(`${result.status} ${result.statusText}`);
-      setResponse(JSON.stringify(body, null, 2));
-      setResponseHeaders(
-        Array.from(result.headers, ([key, value]) => `${key}: ${value}`).join(
-          "\n",
-        ),
-      );
-      if (!result.ok) setView("JSON");
-      setFeedback(
-        result.ok ? "Response received." : "The request returned an error.",
-      );
-    } catch {
-      await minimumLoadingTime;
-      setStatus("Request failed");
-      setDuration(null);
-      setFeedback("Couldn’t reach the endpoint. Please try again.");
-    } finally {
-      requestInFlight.current = false;
-      setIsSending(false);
-    }
-  }
 
   async function copyResponse() {
     try {
@@ -101,20 +47,6 @@ export function ApiConsole({
           {endpoint}
         </a>
         <span className="request-format">HTTP/1.1</span>
-        <button
-          className="send-button"
-          onClick={sendRequest}
-          disabled={isSending}
-          aria-label={isSending ? "Sending request" : "Send"}
-        >
-          Send
-          <span
-            className={isSending ? "send-icon is-loading" : "send-icon"}
-            aria-hidden="true"
-          >
-            {isSending ? null : "↗"}
-          </span>
-        </button>
       </div>
 
       <div className="response-toolbar">
@@ -134,26 +66,15 @@ export function ApiConsole({
             </button>
           ))}
         </div>
-        <div className="response-status" aria-live="polite">
-          <span
-            className={
-              status.startsWith("200") ? "status success" : "status failure"
-            }
-          >
+        <div className="response-status">
+          <span className="status success">
             <span className="status-dot" />
-            {status}
-          </span>
-          <span
-            className="response-duration"
-            style={{ visibility: duration === null ? "hidden" : "visible" }}
-            aria-hidden={duration === null}
-          >
-            {duration ?? "—"} ms
+            200 OK
           </span>
         </div>
       </div>
 
-      <div id="response-body" className="response-body" aria-busy={isSending}>
+      <div id="response-body" className="response-body">
         <div hidden={view !== "Preview"}>{children}</div>
         {view === "JSON" && (
           <pre className="raw-response" tabIndex={0} aria-label="JSON response">
@@ -165,7 +86,7 @@ export function ApiConsole({
             <section aria-labelledby="request-headers-title">
               <h2 id="request-headers-title">Request Headers</h2>
               <p className="headers-note">
-                Application-set headers. The browser may add others.
+                Expected headers for this endpoint. The browser may add others.
               </p>
               <pre tabIndex={0} aria-label="Request headers">
                 <code>{requestHeadersText}</code>
