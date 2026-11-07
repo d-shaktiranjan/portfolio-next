@@ -13,7 +13,7 @@ export const profile = {
     linkedin: "https://www.linkedin.com/in/d-shaktiranjan/",
     email: "mailto:debatashaktiranjan@gmail.com",
     writing: "https://destructure.in/",
-    projects: "https://shakti.destructure.in/projects",
+    projects: "/projects",
     resume: "https://shakti.destructure.in/resume.pdf",
   },
 };

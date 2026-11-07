@@ -3,6 +3,7 @@ import Link from "next/link";
 const endpoints = [
   { href: "/", path: "/api/me", label: "Profile" },
   { href: "/skills", path: "/api/skills", label: "Skills" },
+  { href: "/projects", path: "/api/projects", label: "Projects" },
 ];
 
 export function EndpointNavigation({

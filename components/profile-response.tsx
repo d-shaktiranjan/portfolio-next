@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { Profile } from "@/lib/profile";
 
 export function ProfileResponse({ profile }: { profile: Profile }) {
@@ -47,11 +48,7 @@ export function ProfileResponse({ profile }: { profile: Profile }) {
       </dl>
 
       <nav className="resource-links" aria-label="Explore my work">
-        <a
-          href={profile.links.projects}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
+        <Link href={profile.links.projects}>
           <span className="resource-icon" aria-hidden="true">
             ⌁
           </span>
@@ -62,7 +59,7 @@ export function ProfileResponse({ profile }: { profile: Profile }) {
           <span className="resource-arrow" aria-hidden="true">
             ↗
           </span>
-        </a>
+        </Link>
         <a
           href={profile.links.writing}
           target="_blank"
