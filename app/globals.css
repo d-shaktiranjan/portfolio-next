@@ -837,3 +837,45 @@ h1 {
     display: none;
   }
 }
+
+.profile-email {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+}
+.profile-email > p {
+  margin: 0 0 12px;
+  color: var(--text-muted);
+  font-size: 14px;
+}
+.email-contact {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.email-contact > a {
+  min-width: 0;
+  color: var(--foreground);
+  font-size: 18px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+.email-contact > a:hover {
+  color: var(--accent);
+}
+.email-contact > button {
+  display: inline-grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-muted);
+}
+.email-contact > button:hover {
+  background: var(--surface-soft);
+  color: var(--foreground);
+}

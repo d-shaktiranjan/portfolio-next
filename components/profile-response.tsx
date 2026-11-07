@@ -1,4 +1,5 @@
 import type { Profile } from "@/lib/profile";
+import { EmailContact } from "@/components/email-contact";
 
 export function ProfileResponse({ profile }: { profile: Profile }) {
   return (
@@ -21,11 +22,11 @@ export function ProfileResponse({ profile }: { profile: Profile }) {
 
       <dl className="profile-details">
         <div>
-          <dt>education</dt>
+          <dt>Education</dt>
           <dd>{profile.education}</dd>
         </div>
         <div>
-          <dt>elsewhere</dt>
+          <dt>Socials</dt>
           <dd className="social-links">
             <a
               href={profile.links.github}
@@ -41,8 +42,8 @@ export function ProfileResponse({ profile }: { profile: Profile }) {
             >
               LinkedIn <span aria-hidden="true">↗</span>
             </a>
-            <a href={profile.links.email}>
-              Email <span aria-hidden="true">↗</span>
+            <a href={profile.links.x} target="_blank" rel="noopener noreferrer">
+              X <span aria-hidden="true">↗</span>
             </a>
             <a
               href={profile.links.writing}
@@ -65,6 +66,10 @@ export function ProfileResponse({ profile }: { profile: Profile }) {
           Read my résumé <span aria-hidden="true">↗</span>
         </a>
       </p>
+      <section className="profile-email" aria-label="Email">
+        <p>Let’s connect.</p>
+        <EmailContact email={profile.links.email.replace("mailto:", "")} />
+      </section>
     </article>
   );
 }

@@ -11,6 +11,7 @@ export const profile = {
   links: {
     github: "https://github.com/d-shaktiranjan",
     linkedin: "https://www.linkedin.com/in/d-shaktiranjan/",
+    x: "https://x.com/d_shaktiranjan",
     email: "mailto:debatashaktiranjan@gmail.com",
     writing: "https://destructure.in/",
     projects: "/projects",
