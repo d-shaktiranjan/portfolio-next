@@ -559,44 +559,12 @@ h1 {
   font-size: 16px;
   line-height: 1.7;
 }
-.primary-stack {
-  padding: 2px 0 2px 16px;
-  border-left: 2px solid var(--accent);
-  margin-bottom: 26px;
-}
-.primary-stack h2 {
-  margin: 0 0 10px;
-  color: var(--text-muted);
-  font-family: var(--font-geist-mono), monospace;
-  font-size: 13px;
-  font-weight: 400;
-}
-.primary-stack ul,
 .skill-category ul {
   display: flex;
   flex-wrap: wrap;
   margin: 0;
   padding: 0;
   list-style: none;
-}
-.primary-stack ul {
-  column-gap: 12px;
-  row-gap: 6px;
-  font-size: 22px;
-  font-weight: 400;
-  letter-spacing: -0.5px;
-}
-.primary-stack li + li::before {
-  content: "/";
-  margin-right: 12px;
-  color: var(--accent);
-  font-weight: 400;
-}
-.primary-stack p {
-  margin: 10px 0 0;
-  color: var(--text-secondary);
-  font-size: 14px;
-  line-height: 1.7;
 }
 .skill-category {
   display: grid;
@@ -621,6 +589,9 @@ h1 {
 .skill-category li {
   color: var(--text-secondary);
 }
+.skill-category li.primary-skill {
+  font-weight: 500;
+}
 
 @media (min-width: 801px) and (max-height: 800px) {
   .skills {
@@ -628,9 +599,6 @@ h1 {
   }
   .skills-description {
     margin-block: 8px 18px;
-  }
-  .primary-stack {
-    margin-bottom: 18px;
   }
   .skill-category {
     padding-block: 11px;
@@ -705,9 +673,6 @@ h1 {
   }
   .skills-description {
     font-size: 15px;
-  }
-  .primary-stack ul {
-    font-size: 19px;
   }
   .skill-category {
     grid-template-columns: minmax(0, 1fr);

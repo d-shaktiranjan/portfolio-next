@@ -4,8 +4,17 @@ import type { ApiResponse } from "@/lib/api";
 export const skills = {
   title: "Skills",
   description: "The tools I use to build and ship backend systems.",
-  primaryStack: ["Node.js", "Express.js", "TypeScript"],
-  primaryStackNote: "The stack I work with most for backend services and APIs.",
+  primarySkills: [
+    "TypeScript",
+    "Express.js",
+    "PostgreSQL",
+    "MongoDB",
+    "Redis",
+    "CI/CD",
+    "RAG",
+    "AWS",
+    "Linux",
+  ],
   categories: [
     {
       name: "Backend",
@@ -21,7 +30,16 @@ export const skills = {
     },
     {
       name: "DevOps & tools",
-      items: ["Linux", "Git", "GitHub", "Docker", "CI/CD", "AWS", "Nginx"],
+      items: [
+        "Linux",
+        "Git",
+        "GitHub",
+        "Docker",
+        "CI/CD",
+        "AWS",
+        "Nginx",
+        "OpenAPI",
+      ],
     },
     {
       name: "AI & Retrieval",
