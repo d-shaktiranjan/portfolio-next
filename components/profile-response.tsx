@@ -3,14 +3,16 @@ import type { Profile } from "@/lib/profile";
 export function ProfileResponse({ profile }: { profile: Profile }) {
   return (
     <article className="profile">
-      <p className="profile-greeting">Hi This is</p>
-      <h1>
-        {profile.name}
-        <span className="accent">.</span>
-      </h1>
-      <p className="profile-role">
-        <span aria-hidden="true">⌘</span> {profile.role}
-      </p>
+      <div className="profile-intro">
+        <p className="profile-greeting">Hi This is</p>
+        <h1>
+          {profile.name}
+          <span className="accent">.</span>
+        </h1>
+        <p className="profile-role">
+          <span aria-hidden="true">⌘</span> {profile.role}
+        </p>
+      </div>
 
       <div className="profile-about">
         <h2>{profile.introduction}</h2>

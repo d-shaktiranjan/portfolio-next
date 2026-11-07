@@ -29,16 +29,7 @@ export function SkillsResponse({ skills }: { skills: Skills }) {
             <h2 id={`skill-category-${index}`}>{category.name}</h2>
             <ul>
               {category.items.map((skill) => (
-                <li
-                  className={
-                    skills.primaryStack.includes(skill)
-                      ? "primary-skill"
-                      : undefined
-                  }
-                  key={skill}
-                >
-                  {skill}
-                </li>
+                <li key={skill}>{skill}</li>
               ))}
             </ul>
           </section>

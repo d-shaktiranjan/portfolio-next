@@ -205,6 +205,9 @@ a {
 .profile {
   padding: 24px 40px;
 }
+.profile h1 {
+  font-size: 36px;
+}
 .profile-greeting {
   margin: 0 0 8px;
   color: var(--text-secondary);
@@ -403,6 +406,9 @@ h1 {
 }
 
 @media (max-width: 600px) {
+  .profile h1 {
+    font-size: 32px;
+  }
   .workspace {
     padding: 8px;
   }
@@ -577,7 +583,7 @@ h1 {
   column-gap: 12px;
   row-gap: 6px;
   font-size: 22px;
-  font-weight: 500;
+  font-weight: 400;
   letter-spacing: -0.5px;
 }
 .primary-stack li + li::before {
@@ -614,9 +620,6 @@ h1 {
 }
 .skill-category li {
   color: var(--text-secondary);
-}
-.skill-category li.primary-skill {
-  color: var(--foreground);
 }
 
 @media (min-width: 801px) and (max-height: 800px) {
