@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import { connection } from "next/server";
 import { ApiConsole } from "@/components/api-console";
+import { ApiWorkspace } from "@/components/api-workspace";
 import { ProfileResponse } from "@/components/profile-response";
 import { profileApiResponse } from "@/lib/profile";
 
@@ -9,7 +10,7 @@ async function ProfileEndpoint() {
   await connection();
 
   return (
-    <ApiConsole initialResponse={profileApiResponse}>
+    <ApiConsole endpoint="/api/me" initialResponse={profileApiResponse}>
       <ProfileResponse profile={profileApiResponse.data} />
     </ApiConsole>
   );
@@ -17,12 +18,12 @@ async function ProfileEndpoint() {
 
 export default function Home() {
   return (
-    <main className="workspace">
+    <ApiWorkspace activeEndpoint="/api/me">
       <Suspense
         fallback={<p className="loading-response">Receiving response…</p>}
       >
         <ProfileEndpoint />
       </Suspense>
-    </main>
+    </ApiWorkspace>
   );
 }

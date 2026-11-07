@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState, type ReactNode } from "react";
-import type { ProfileApiResponse } from "@/lib/profile";
+import type { ApiResponse } from "@/lib/api";
 import { JsonCode } from "@/components/json-code";
 
 type ResponseView = "Preview" | "JSON" | "Headers";
@@ -12,10 +12,12 @@ const requestHeadersText = Object.entries(requestHeaders)
   .join("\n");
 
 export function ApiConsole({
+  endpoint,
   initialResponse,
   children,
 }: {
-  initialResponse: ProfileApiResponse;
+  endpoint: string;
+  initialResponse: ApiResponse<unknown>;
   children: ReactNode;
 }) {
   const [view, setView] = useState<ResponseView>("Preview");
@@ -43,7 +45,7 @@ export function ApiConsole({
 
     try {
       const start = performance.now();
-      const result = await fetch("/api/me", {
+      const result = await fetch(endpoint, {
         headers: requestHeaders,
         cache: "no-store",
         signal: AbortSignal.timeout(10000),
@@ -88,124 +90,107 @@ export function ApiConsole({
   }
 
   return (
-    <div className="api-workspace">
-      <div className="workspace-label">
-        <span className="workspace-mark" aria-hidden="true">
-          [s]
-        </span>{" "}
-        shakti / personal-api <span className="version">v1.0</span>
+    <section className="api-console" aria-label="Shakti’s personal API">
+      <div className="request-bar">
+        <span className="method">GET</span>
+        <a
+          href={endpoint}
+          className="endpoint"
+          aria-label="Open the raw API response"
+        >
+          {endpoint}
+        </a>
+        <span className="request-format">HTTP/1.1</span>
+        <button
+          className="send-button"
+          onClick={sendRequest}
+          disabled={isSending}
+          aria-label={isSending ? "Sending request" : "Send"}
+        >
+          Send
+          <span
+            className={isSending ? "send-icon is-loading" : "send-icon"}
+            aria-hidden="true"
+          >
+            {isSending ? null : "↗"}
+          </span>
+        </button>
       </div>
 
-      <section className="api-console" aria-label="Shakti’s personal API">
-        <div className="request-bar">
-          <span className="method">GET</span>
-          <a
-            href="/api/me"
-            className="endpoint"
-            aria-label="Open the raw API response"
-          >
-            /api/me
-          </a>
-          <span className="request-format">HTTP/1.1</span>
-          <button
-            className="send-button"
-            onClick={sendRequest}
-            disabled={isSending}
-            aria-label={isSending ? "Sending request" : "Send"}
-          >
-            Send
-            <span
-              className={isSending ? "send-icon is-loading" : "send-icon"}
-              aria-hidden="true"
+      <div className="response-toolbar">
+        <div className="response-views" role="group" aria-label="Response view">
+          {views.map((item) => (
+            <button
+              key={item}
+              className={view === item ? "view-button active" : "view-button"}
+              aria-pressed={view === item}
+              aria-controls="response-body"
+              onClick={() => {
+                setView(item);
+                setFeedback("");
+              }}
             >
-              {isSending ? null : "↗"}
-            </span>
-          </button>
+              {item}
+            </button>
+          ))}
         </div>
-
-        <div className="response-toolbar">
-          <div
-            className="response-views"
-            role="group"
-            aria-label="Response view"
+        <div className="response-status" aria-live="polite">
+          <span
+            className={
+              status.startsWith("200") ? "status success" : "status failure"
+            }
           >
-            {views.map((item) => (
-              <button
-                key={item}
-                className={view === item ? "view-button active" : "view-button"}
-                aria-pressed={view === item}
-                aria-controls="response-body"
-                onClick={() => {
-                  setView(item);
-                  setFeedback("");
-                }}
-              >
-                {item}
-              </button>
-            ))}
-          </div>
-          <div className="response-status" aria-live="polite">
-            <span
-              className={
-                status.startsWith("200") ? "status success" : "status failure"
-              }
-            >
-              <span className="status-dot" />
-              {status}
-            </span>
-            <span
-              className="response-duration"
-              style={{ visibility: duration === null ? "hidden" : "visible" }}
-              aria-hidden={duration === null}
-            >
-              {duration ?? "—"} ms
-            </span>
-          </div>
-        </div>
-
-        <div id="response-body" className="response-body" aria-busy={isSending}>
-          <div hidden={view !== "Preview"}>{children}</div>
-          {view === "JSON" && (
-            <pre
-              className="raw-response"
-              tabIndex={0}
-              aria-label="JSON response"
-            >
-              <JsonCode value={response} />
-            </pre>
-          )}
-          {view === "Headers" && (
-            <div className="headers-view">
-              <section aria-labelledby="request-headers-title">
-                <h2 id="request-headers-title">Request Headers</h2>
-                <p className="headers-note">
-                  Application-set headers. The browser may add others.
-                </p>
-                <pre tabIndex={0} aria-label="Request headers">
-                  <code>{requestHeadersText}</code>
-                </pre>
-              </section>
-              <section aria-labelledby="response-headers-title">
-                <h2 id="response-headers-title">Response Headers</h2>
-                <pre tabIndex={0} aria-label="Response headers">
-                  <code>{responseHeaders}</code>
-                </pre>
-              </section>
-            </div>
-          )}
-        </div>
-
-        <div className="response-meta">
-          <span role="status">
-            <span className="meta-dot" aria-hidden="true" />
-            {feedback || "application/json"}
+            <span className="status-dot" />
+            {status}
           </span>
-          <button className="copy-button" onClick={copyResponse}>
-            <span aria-hidden="true">⧉</span>{" "}
-            {view === "Headers" ? "Copy headers" : "Copy response"}
-          </button>
+          <span
+            className="response-duration"
+            style={{ visibility: duration === null ? "hidden" : "visible" }}
+            aria-hidden={duration === null}
+          >
+            {duration ?? "—"} ms
+          </span>
         </div>
-      </section>
-    </div>
+      </div>
+
+      <div id="response-body" className="response-body" aria-busy={isSending}>
+        <div hidden={view !== "Preview"}>{children}</div>
+        {view === "JSON" && (
+          <pre className="raw-response" tabIndex={0} aria-label="JSON response">
+            <JsonCode value={response} />
+          </pre>
+        )}
+        {view === "Headers" && (
+          <div className="headers-view">
+            <section aria-labelledby="request-headers-title">
+              <h2 id="request-headers-title">Request Headers</h2>
+              <p className="headers-note">
+                Application-set headers. The browser may add others.
+              </p>
+              <pre tabIndex={0} aria-label="Request headers">
+                <code>{requestHeadersText}</code>
+              </pre>
+            </section>
+            <section aria-labelledby="response-headers-title">
+              <h2 id="response-headers-title">Response Headers</h2>
+              <pre tabIndex={0} aria-label="Response headers">
+                <code>{responseHeaders}</code>
+              </pre>
+            </section>
+          </div>
+        )}
+      </div>
+
+      <div className="response-meta">
+        <span role="status">
+          <span className="meta-dot" aria-hidden="true" />
+          {feedback || "application/json"}
+        </span>
+        <button className="copy-button" onClick={copyResponse}>
+          <span aria-hidden="true">⧉</span>{" "}
+          {view === "Headers" ? "Copy headers" : "Copy response"}
+        </button>
+      </div>
+    </section>
   );
 }

@@ -1,3 +1,5 @@
+import type { ApiResponse } from "@/lib/api";
+
 // The homepage and the public endpoint share one source of truth.
 export const profile = {
   name: "Shakti Ranjan Debata",
@@ -22,6 +24,4 @@ export const profileApiResponse = {
   isSuccess: true,
   message: "Profile retrieved successfully.",
   data: profile,
-};
-
-export type ProfileApiResponse = typeof profileApiResponse;
+} satisfies ApiResponse<Profile>;
