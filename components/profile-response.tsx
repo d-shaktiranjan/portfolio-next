@@ -1,0 +1,96 @@
+import type { Profile } from "@/lib/profile";
+
+export function ProfileResponse({ profile }: { profile: Profile }) {
+  return (
+    <article className="profile">
+      <p className="profile-greeting">Hi This is</p>
+      <h1>
+        {profile.name}
+        <span className="accent">.</span>
+      </h1>
+      <p className="profile-role">
+        <span aria-hidden="true">⌘</span> {profile.role}
+      </p>
+
+      <div className="profile-about">
+        <h2>{profile.introduction}</h2>
+        <p>{profile.description}</p>
+      </div>
+
+      <dl className="profile-details">
+        <div>
+          <dt>education</dt>
+          <dd>{profile.education}</dd>
+        </div>
+        <div>
+          <dt>elsewhere</dt>
+          <dd className="social-links">
+            <a
+              href={profile.links.github}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              GitHub <span aria-hidden="true">↗</span>
+            </a>
+            <a
+              href={profile.links.linkedin}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              LinkedIn <span aria-hidden="true">↗</span>
+            </a>
+            <a href={profile.links.email}>
+              Email <span aria-hidden="true">↗</span>
+            </a>
+          </dd>
+        </div>
+      </dl>
+
+      <nav className="resource-links" aria-label="Explore my work">
+        <a
+          href={profile.links.projects}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <span className="resource-icon" aria-hidden="true">
+            ⌁
+          </span>
+          <span>
+            Projects
+            <span className="resource-description">Things I’ve built</span>
+          </span>
+          <span className="resource-arrow" aria-hidden="true">
+            ↗
+          </span>
+        </a>
+        <a
+          href={profile.links.writing}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <span className="resource-icon" aria-hidden="true">
+            ≡
+          </span>
+          <span>
+            Writing
+            <span className="resource-description">Notes from the backend</span>
+          </span>
+          <span className="resource-arrow" aria-hidden="true">
+            ↗
+          </span>
+        </a>
+      </nav>
+
+      <p className="profile-note">
+        A little more context?{" "}
+        <a
+          href={profile.links.resume}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Read my résumé <span aria-hidden="true">↗</span>
+        </a>
+      </p>
+    </article>
+  );
+}
