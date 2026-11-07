@@ -3,11 +3,12 @@
 import { useState, type ReactNode } from "react";
 import type { ApiResponse } from "@/lib/api";
 import { JsonCode } from "@/components/json-code";
+import { RequestHeaders } from "@/components/request-headers";
+import { useRequestInspection } from "@/components/use-request-inspection";
+import { formatRequestInspection } from "@/lib/request-inspection";
 
 type ResponseView = "Preview" | "JSON" | "Headers";
 const views: ResponseView[] = ["Preview", "JSON", "Headers"];
-const requestHeadersText = "accept: application/json";
-const responseHeaders = "content-type: application/json";
 
 export function ApiConsole({
   endpoint,
@@ -21,12 +22,16 @@ export function ApiConsole({
   const [view, setView] = useState<ResponseView>("Preview");
   const response = JSON.stringify(initialResponse, null, 2);
   const [feedback, setFeedback] = useState("");
+  const { inspection, isLoading } = useRequestInspection(
+    endpoint,
+    view === "Headers",
+  );
 
   async function copyResponse() {
     try {
       await navigator.clipboard.writeText(
-        view === "Headers"
-          ? `Request Headers\n${requestHeadersText}\n\nResponse Headers\n${responseHeaders}`
+        view === "Headers" && inspection
+          ? formatRequestInspection(inspection)
           : response,
       );
       setFeedback("Copied to clipboard.");
@@ -82,23 +87,7 @@ export function ApiConsole({
           </pre>
         )}
         {view === "Headers" && (
-          <div className="headers-view">
-            <section aria-labelledby="request-headers-title">
-              <h2 id="request-headers-title">Request Headers</h2>
-              <p className="headers-note">
-                Expected headers for this endpoint. The browser may add others.
-              </p>
-              <pre tabIndex={0} aria-label="Request headers">
-                <code>{requestHeadersText}</code>
-              </pre>
-            </section>
-            <section aria-labelledby="response-headers-title">
-              <h2 id="response-headers-title">Response Headers</h2>
-              <pre tabIndex={0} aria-label="Response headers">
-                <code>{responseHeaders}</code>
-              </pre>
-            </section>
-          </div>
+          <RequestHeaders inspection={inspection} isLoading={isLoading} />
         )}
       </div>
 
@@ -107,7 +96,11 @@ export function ApiConsole({
           <span className="meta-dot" aria-hidden="true" />
           {feedback || "application/json"}
         </span>
-        <button className="copy-button" onClick={copyResponse}>
+        <button
+          className="copy-button"
+          onClick={copyResponse}
+          disabled={view === "Headers" && (isLoading || !inspection)}
+        >
           <span aria-hidden="true">⧉</span>{" "}
           {view === "Headers" ? "Copy headers" : "Copy response"}
         </button>
