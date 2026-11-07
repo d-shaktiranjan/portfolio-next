@@ -9,17 +9,11 @@ export const skills = {
   categories: [
     {
       name: "Backend",
-      items: [
-        "Node.js",
-        "Express.js",
-        "Django",
-        "Django REST Framework",
-        "Flask",
-      ],
+      items: ["Node.js", "Express.js", "Django", "FastAPI", "Flask"],
     },
     {
       name: "Databases",
-      items: ["MySQL", "MongoDB", "MariaDB", "Redis"],
+      items: ["PostgreSQL", "MySQL", "MongoDB", "Redis"],
     },
     {
       name: "Languages",
@@ -27,11 +21,15 @@ export const skills = {
     },
     {
       name: "DevOps & tools",
-      items: ["Linux", "Git", "Docker", "Nginx", "GitHub"],
+      items: ["Linux", "Git", "GitHub", "Docker", "CI/CD", "AWS", "Nginx"],
+    },
+    {
+      name: "AI & Retrieval",
+      items: ["RAG", "Vector Databases", "LangChain"],
     },
     {
       name: "Frontend (basic)",
-      items: ["HTML", "CSS", "React", "Tailwind CSS", "Bootstrap"],
+      items: ["HTML", "CSS", "React", "Next.js", "Tailwind CSS"],
     },
   ],
 };
