@@ -99,6 +99,9 @@ a {
   font-size: 19px;
   font-weight: 600;
 }
+.workspace-label:hover {
+  color: var(--text-secondary);
+}
 .version {
   margin-left: auto;
   font-size: 14px;
@@ -219,6 +222,9 @@ h1 {
   font-weight: 500;
   letter-spacing: -1.5px;
   line-height: 1.2;
+}
+h1 > .accent {
+  margin-inline-start: 0.08em;
 }
 .profile-role {
   display: flex;

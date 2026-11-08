@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import Link from "next/link";
 import { EndpointNavigation } from "@/components/endpoint-navigation";
 
 export function ApiWorkspace({
@@ -11,12 +12,12 @@ export function ApiWorkspace({
   return (
     <main className="workspace">
       <div className="api-workspace">
-        <div className="workspace-label">
+        <Link href="/" className="workspace-label" aria-label="Shakti — Home">
           <span className="workspace-mark" aria-hidden="true">
             [s]
           </span>
           shakti / personal-api <span className="version">v1.0</span>
-        </div>
+        </Link>
         <div className="api-client">
           <EndpointNavigation activeEndpoint={activeEndpoint} />
           {children}
