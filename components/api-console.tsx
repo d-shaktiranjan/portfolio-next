@@ -15,13 +15,17 @@ export function ApiConsole({
   endpoint,
   initialResponse,
   children,
+  statusCode = 200,
 }: {
   endpoint: string;
-  initialResponse: ApiResponse<unknown>;
+  initialResponse: ApiResponse<unknown> | null;
   children: ReactNode;
+  statusCode?: 200 | 404;
 }) {
+  const status = statusCode === 404 ? "404 Not Found" : "200 OK";
   const [view, setView] = useState<ResponseView>("Preview");
-  const response = JSON.stringify(initialResponse, null, 2);
+  const response =
+    initialResponse === null ? "" : JSON.stringify(initialResponse, null, 2);
   const [feedback, setFeedback] = useState("");
   const { inspection, isLoading } = useRequestInspection(
     endpoint,
@@ -75,8 +79,8 @@ export function ApiConsole({
         <div className="response-status">
           <button
             type="button"
-            className="status success status-button"
-            aria-label="200 OK — View headers"
+            className={`status ${statusCode === 404 ? "failure" : "success"} status-button`}
+            aria-label={`${status} — View headers`}
             aria-controls="response-body"
             aria-pressed={view === "Headers"}
             onClick={() => {
@@ -85,7 +89,7 @@ export function ApiConsole({
             }}
           >
             <span className="status-dot" aria-hidden="true" />
-            200 OK
+            {status}
           </button>
         </div>
       </div>

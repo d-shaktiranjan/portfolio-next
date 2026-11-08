@@ -601,6 +601,46 @@ h1 > .accent {
   display: none;
 }
 
+.not-found {
+  padding: 36px;
+}
+.not-found-code {
+  margin: 0 0 16px;
+  color: var(--text-muted);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 13px;
+}
+.not-found h1 {
+  font-size: 36px;
+}
+.not-found-description {
+  margin: 16px 0 28px;
+  color: var(--text-secondary);
+  font-size: 16px;
+  line-height: 1.7;
+}
+.not-found-home {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+}
+.not-found-home:hover {
+  background: var(--surface-soft);
+  border-color: var(--text-muted);
+}
+@media (max-width: 600px) {
+  .not-found {
+    padding: 28px 22px;
+  }
+  .not-found h1 {
+    font-size: 32px;
+  }
+}
+
 .experiences {
   padding: 28px 36px 20px;
 }

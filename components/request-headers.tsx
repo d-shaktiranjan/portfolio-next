@@ -8,8 +8,12 @@ function HeaderFields({ fields }: { fields: HeaderField[] }) {
           <dt>{name}</dt>
           <dd
             className={
-              name === "Status code" && value.startsWith("200")
-                ? "success"
+              name === "Status code"
+                ? value.startsWith("2")
+                  ? "success"
+                  : /^[45]\d{2}/.test(value)
+                    ? "failure"
+                    : undefined
                 : undefined
             }
           >

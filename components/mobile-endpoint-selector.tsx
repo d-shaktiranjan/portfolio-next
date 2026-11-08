@@ -31,6 +31,11 @@ export function MobileEndpointSelector({
             if (endpoint) router.push(endpoint.href);
           }}
         >
+          {!endpoints.some((endpoint) => endpoint.path === activeEndpoint) && (
+            <option value={activeEndpoint} disabled>
+              Select endpoint
+            </option>
+          )}
           {endpoints.map((endpoint) => (
             <option key={endpoint.path} value={endpoint.path}>
               GET {endpoint.path}
