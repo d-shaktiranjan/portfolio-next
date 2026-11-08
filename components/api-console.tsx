@@ -6,6 +6,7 @@ import { JsonCode } from "@/components/json-code";
 import { RequestHeaders } from "@/components/request-headers";
 import { useRequestInspection } from "@/components/use-request-inspection";
 import { formatRequestInspection } from "@/lib/request-inspection";
+import { CopyIcon } from "@/components/copy-icon";
 
 type ResponseView = "Preview" | "JSON" | "Headers";
 const views: ResponseView[] = ["Preview", "JSON", "Headers"];
@@ -101,7 +102,7 @@ export function ApiConsole({
           onClick={copyResponse}
           disabled={view === "Headers" && (isLoading || !inspection)}
         >
-          <span aria-hidden="true">⧉</span>{" "}
+          <CopyIcon copied={feedback === "Copied to clipboard."} />
           {view === "Headers" ? "Copy headers" : "Copy response"}
         </button>
       </div>

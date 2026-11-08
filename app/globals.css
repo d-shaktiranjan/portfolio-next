@@ -418,8 +418,8 @@ h1 {
 .copy-button:hover {
   color: var(--foreground);
 }
-.copy-button > span {
-  font-size: 17px;
+.copy-icon {
+  flex-shrink: 0;
 }
 
 /* Keep the full profile visible on shorter desktop windows. */

@@ -7,6 +7,14 @@ const nextConfig: NextConfig = {
   },
   // Deliver complete request-time HTML instead of a partial loading shell.
   cacheComponents: false,
+  headers() {
+    return [
+      {
+        source: "/api/:path*",
+        headers: [{ key: "X-Robots-Tag", value: "noindex" }],
+      },
+    ];
+  },
   turbopack: {
     rules: {
       "*.css": {

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { CopyIcon } from "@/components/copy-icon";
 
 export function EmailContact({ email }: { email: string }) {
   const [status, setStatus] = useState<"idle" | "copied" | "error">("idle");
@@ -31,26 +32,7 @@ export function EmailContact({ email }: { email: string }) {
         aria-label={label}
         title={label}
       >
-        <svg
-          width="18"
-          height="18"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          aria-hidden="true"
-        >
-          {status === "copied" ? (
-            <path d="m5 12 4 4L19 6" />
-          ) : (
-            <>
-              <rect x="4" y="8" width="12" height="12" rx="1" />
-              <path d="M8 8V4h12v12h-4" />
-            </>
-          )}
-        </svg>
+        <CopyIcon copied={status === "copied"} />
       </button>
       <span className="sr-only" role="status">
         {status === "copied" && "Email copied to clipboard."}

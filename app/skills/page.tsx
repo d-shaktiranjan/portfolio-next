@@ -4,12 +4,14 @@ import { ApiConsole } from "@/components/api-console";
 import { ApiWorkspace } from "@/components/api-workspace";
 import { SkillsResponse } from "@/components/skills-response";
 import { skillsApiResponse } from "@/lib/skills";
+import { createPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Skills · Shakti Ranjan Debata",
+export const metadata: Metadata = createPageMetadata({
+  title: "Skills",
+  path: "/skills",
   description:
     "Node.js, Express.js, and TypeScript are my primary stack. Explore my backend, database, language, and DevOps skills.",
-};
+});
 
 export default async function SkillsPage() {
   await connection();
