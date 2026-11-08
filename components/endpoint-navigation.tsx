@@ -3,6 +3,7 @@ import { MobileEndpointSelector } from "@/components/mobile-endpoint-selector";
 
 const endpoints = [
   { href: "/", path: "/api/me", label: "Profile" },
+  { href: "/experiences", path: "/api/experiences", label: "Experience" },
   { href: "/skills", path: "/api/skills", label: "Skills" },
   { href: "/projects", path: "/api/projects", label: "Projects" },
 ];

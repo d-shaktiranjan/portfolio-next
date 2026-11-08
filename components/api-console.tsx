@@ -73,10 +73,20 @@ export function ApiConsole({
           ))}
         </div>
         <div className="response-status">
-          <span className="status success">
-            <span className="status-dot" />
+          <button
+            type="button"
+            className="status success status-button"
+            aria-label="200 OK — View headers"
+            aria-controls="response-body"
+            aria-pressed={view === "Headers"}
+            onClick={() => {
+              setView("Headers");
+              setFeedback("");
+            }}
+          >
+            <span className="status-dot" aria-hidden="true" />
             200 OK
-          </span>
+          </button>
         </div>
       </div>
 

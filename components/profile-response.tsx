@@ -26,7 +26,7 @@ export function ProfileResponse({ profile }: { profile: Profile }) {
           <dd>{profile.education}</dd>
         </div>
         <div>
-          <dt>Socials</dt>
+          <dt>Social</dt>
           <dd className="social-links">
             <a
               href={profile.links.github}

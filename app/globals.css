@@ -186,6 +186,15 @@ a {
   align-items: center;
   gap: 6px;
 }
+.status-button {
+  padding: 6px 0;
+  border: 0;
+  background: transparent;
+}
+.status-button:hover {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
 .success {
   color: var(--success);
 }
@@ -531,7 +540,7 @@ h1 > .accent {
 .api-client {
   flex: 1;
   display: grid;
-  grid-template-columns: 200px minmax(0, 1fr);
+  grid-template-columns: 220px minmax(0, 1fr);
   grid-template-rows: minmax(0, 1fr);
   align-items: stretch;
   gap: 12px;
@@ -590,6 +599,81 @@ h1 > .accent {
 }
 .mobile-endpoint-selector {
   display: none;
+}
+
+.experiences {
+  padding: 28px 36px 20px;
+}
+.experiences h1 {
+  font-size: 36px;
+}
+.experiences-description {
+  margin: 10px 0 24px;
+  color: var(--text-secondary);
+  font-size: 16px;
+  line-height: 1.7;
+}
+.experience {
+  padding: 22px 0;
+  border-top: 1px solid var(--border);
+}
+.experience-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+.experience h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 500;
+  letter-spacing: -0.3px;
+}
+.experience-company-link span {
+  color: var(--text-muted);
+  font-size: 14px;
+  font-weight: 400;
+}
+.experience-company-link:hover,
+.experience-company-link:hover span {
+  color: var(--accent);
+}
+.experience-current {
+  padding: 2px 7px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  color: var(--success);
+  font-size: 11px;
+}
+.experience-position {
+  margin: 8px 0 4px;
+  font-size: 16px;
+}
+.experience-duration {
+  margin: 0;
+  color: var(--text-muted);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 13px;
+  line-height: 1.8;
+}
+.experience-summary {
+  max-width: 72ch;
+  margin: 14px 0 0;
+  color: var(--text-secondary);
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+@media (max-width: 600px) {
+  .experiences {
+    padding: 24px 22px 16px;
+  }
+  .experiences h1 {
+    font-size: 32px;
+  }
+  .experiences-description {
+    font-size: 15px;
+  }
 }
 
 /* Text-only skills keep the emphasis on the stack and its categories. */
