@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { Suspense } from "react";
 import { connection } from "next/server";
 import { ApiConsole } from "@/components/api-console";
 import { ApiWorkspace } from "@/components/api-workspace";
@@ -12,24 +11,14 @@ export const metadata: Metadata = {
     "Explore my projects, from Express.js logging middleware to blogging platforms and Python tools.",
 };
 
-async function ProjectsEndpoint() {
+export default async function ProjectsPage() {
   await connection();
 
   return (
-    <ApiConsole endpoint="/api/projects" initialResponse={projectsApiResponse}>
-      <ProjectsResponse projects={projectsApiResponse.data} />
-    </ApiConsole>
-  );
-}
-
-export default function ProjectsPage() {
-  return (
     <ApiWorkspace activeEndpoint="/api/projects">
-      <Suspense
-        fallback={<p className="loading-response">Receiving response…</p>}
-      >
-        <ProjectsEndpoint />
-      </Suspense>
+      <ApiConsole endpoint="/api/projects" initialResponse={projectsApiResponse}>
+        <ProjectsResponse projects={projectsApiResponse.data} />
+      </ApiConsole>
     </ApiWorkspace>
   );
 }

@@ -5,8 +5,8 @@ const nextConfig: NextConfig = {
   experimental: {
     agentFeedback: true,
   },
-  cacheComponents: true,
-  partialPrefetching: true,
+  // Deliver complete request-time HTML instead of a partial loading shell.
+  cacheComponents: false,
   turbopack: {
     rules: {
       "*.css": {
