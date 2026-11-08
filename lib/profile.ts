@@ -15,7 +15,7 @@ export const profile = {
     email: "mailto:debatashaktiranjan@gmail.com",
     writing: "https://destructure.in/",
     projects: "/projects",
-    resume: "https://shakti.destructure.in/resume.pdf",
+    resume: "/resume.pdf",
   },
 };
 
