@@ -5,7 +5,7 @@ export function ProfileResponse({ profile }: { profile: Profile }) {
   return (
     <article className="profile">
       <div className="profile-intro">
-        <p className="profile-greeting">Hi This is</p>
+        <p className="profile-greeting">Hi this is</p>
         <h1>
           {profile.name}
           <span className="accent">.</span>
@@ -68,7 +68,7 @@ export function ProfileResponse({ profile }: { profile: Profile }) {
       </p>
       <section className="profile-email" aria-label="Email">
         <p>Let’s connect.</p>
-        <EmailContact email={profile.links.email.replace("mailto:", "")} />
+        <EmailContact email={profile.links.email} />
       </section>
     </article>
   );
