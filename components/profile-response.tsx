@@ -66,6 +66,14 @@ export function ProfileResponse({ profile }: { profile: Profile }) {
           Read my résumé <span aria-hidden="true">↗</span>
         </a>
       </p>
+
+      <p className="profile-note">
+        Evolution matters !{" "}
+        <a href={profile.links.v0} target="_blank" rel="noopener noreferrer">
+          v0 <span aria-hidden="true">↗</span>
+        </a>
+      </p>
+
       <section className="profile-email" aria-label="Email">
         <p>Let’s connect.</p>
         <EmailContact email={profile.links.email} />
