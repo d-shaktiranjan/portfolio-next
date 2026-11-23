@@ -1,0 +1,24 @@
+# Shakti Ranjan Debata
+
+> Portfolio of Shakti Ranjan Debata, a software engineer who builds backend systems with Node.js, Express.js, and TypeScript.
+
+The public JSON endpoints accept GET requests. Each response includes `isSuccess`, `message`, and `data`. The `data` field contains the portfolio content.
+
+## JSON endpoints
+
+- [Profile, education, and contact links](https://shaktiranjan.dev/api/me)
+- [Professional experience](https://shaktiranjan.dev/api/experiences)
+- [Technical skills](https://shaktiranjan.dev/api/skills)
+- [Selected projects](https://shaktiranjan.dev/api/projects)
+
+## Portfolio pages
+
+- [Home and profile](https://shaktiranjan.dev/)
+- [Experience](https://shaktiranjan.dev/experiences)
+- [Skills](https://shaktiranjan.dev/skills)
+- [Projects](https://shaktiranjan.dev/projects)
+
+## Optional
+
+- [Résumé (PDF)](https://shaktiranjan.dev/resume.pdf)
+- [Technical writing](https://destructure.in/)
