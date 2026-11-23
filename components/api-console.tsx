@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type ReactNode } from "react";
+import { useSearchParams } from "next/navigation";
 import type { ApiResponse } from "@/lib/api";
 import { JsonCode } from "@/components/json-code";
 import { RequestHeaders } from "@/components/request-headers";
@@ -23,7 +24,9 @@ export function ApiConsole({
   statusCode?: 200 | 404;
 }) {
   const status = statusCode === 404 ? "404 Not Found" : "200 OK";
-  const [view, setView] = useState<ResponseView>("Preview");
+  const searchParams = useSearchParams();
+  const viewParam = searchParams.get("view");
+  const view = views.find((item) => item.toLowerCase() === viewParam) ?? "Preview";
   const response =
     initialResponse === null ? "" : JSON.stringify(initialResponse, null, 2);
   const [feedback, setFeedback] = useState("");
@@ -31,6 +34,21 @@ export function ApiConsole({
     endpoint,
     view === "Headers",
   );
+
+  function selectView(nextView: ResponseView) {
+    setFeedback("");
+
+    const url = new URL(window.location.href);
+    if (nextView === "Preview") {
+      url.searchParams.delete("view");
+    } else {
+      url.searchParams.set("view", nextView.toLowerCase());
+    }
+
+    if (url.href !== window.location.href) {
+      window.history.pushState(null, "", url);
+    }
+  }
 
   async function copyResponse() {
     try {
@@ -67,10 +85,7 @@ export function ApiConsole({
               className={view === item ? "view-button active" : "view-button"}
               aria-pressed={view === item}
               aria-controls="response-body"
-              onClick={() => {
-                setView(item);
-                setFeedback("");
-              }}
+              onClick={() => selectView(item)}
             >
               {item}
             </button>
@@ -83,10 +98,7 @@ export function ApiConsole({
             aria-label={`${status} — View headers`}
             aria-controls="response-body"
             aria-pressed={view === "Headers"}
-            onClick={() => {
-              setView("Headers");
-              setFeedback("");
-            }}
+            onClick={() => selectView("Headers")}
           >
             <span className="status-dot" aria-hidden="true" />
             {status}
