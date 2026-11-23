@@ -6,7 +6,7 @@ export const profile = {
   role: "Software Engineer",
   introduction: "I build Backend things.",
   description:
-    "I enjoys turning complex problems into simple, dependable systems. I care about what happens between a request and a response.",
+    "I enjoy turning complex problems into simple, dependable systems. I care about what happens between a request and a response.",
   education: "Computer Science Engineering · CV Raman Global University",
   links: {
     github: "https://github.com/d-shaktiranjan",
