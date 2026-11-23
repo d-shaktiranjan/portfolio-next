@@ -208,6 +208,13 @@ a {
   background: currentColor;
 }
 .response-body {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+.response-scroll {
   flex: 1;
   min-height: 0;
   overflow-y: auto;
@@ -424,14 +431,23 @@ h1 > .accent {
   display: flex;
   gap: 7px;
   align-items: center;
-  background: transparent;
-  border: 0;
-  padding: 2px;
   font-size: 13px;
-  color: var(--text-muted);
+  padding: 4px 8px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--surface-soft);
+  color: var(--foreground);
+  white-space: nowrap;
 }
 .copy-button:hover {
-  color: var(--foreground);
+  border-color: var(--text-muted);
+}
+.floating-copy-button {
+  position: absolute;
+  z-index: 1;
+  inset-block-start: 8px;
+  inset-inline-end: 16px;
+  font-family: var(--font-geist-mono), monospace;
 }
 .copy-icon {
   flex-shrink: 0;

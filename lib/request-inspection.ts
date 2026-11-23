@@ -24,17 +24,3 @@ export function readResponseHeaders(headers: Headers): HeaderField[] {
     return value === null ? [] : [{ name, value }];
   });
 }
-
-export function formatRequestInspection(inspection: RequestInspection) {
-  return [
-    { title: "General", fields: inspection.general },
-    { title: "Response headers", fields: inspection.responseHeaders },
-    { title: "Request headers", fields: inspection.requestHeaders },
-  ]
-    .map(({ title, fields }) =>
-      [title, ...fields.map(({ name, value }) => `${name}: ${value}`)].join(
-        "\n",
-      ),
-    )
-    .join("\n\n");
-}

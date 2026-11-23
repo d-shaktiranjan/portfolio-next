@@ -6,11 +6,13 @@ import type { ApiResponse } from "@/lib/api";
 import { JsonCode } from "@/components/json-code";
 import { RequestHeaders } from "@/components/request-headers";
 import { useRequestInspection } from "@/components/use-request-inspection";
-import { formatRequestInspection } from "@/lib/request-inspection";
 import { CopyIcon } from "@/components/copy-icon";
 
 type ResponseView = "Preview" | "JSON" | "Headers";
 const views: ResponseView[] = ["Preview", "JSON", "Headers"];
+const command = "npx hi-dev";
+const commandCopied = "Command copied to clipboard.";
+const responseCopied = "Copied to clipboard.";
 
 export function ApiConsole({
   endpoint,
@@ -52,14 +54,19 @@ export function ApiConsole({
 
   async function copyResponse() {
     try {
-      await navigator.clipboard.writeText(
-        view === "Headers" && inspection
-          ? formatRequestInspection(inspection)
-          : response,
-      );
-      setFeedback("Copied to clipboard.");
+      await navigator.clipboard.writeText(response);
+      setFeedback(responseCopied);
     } catch {
-      setFeedback("Couldn’t copy. Open the JSON view to select the response.");
+      setFeedback("Couldn’t copy. Select the text to copy it manually.");
+    }
+  }
+
+  async function copyCommand() {
+    try {
+      await navigator.clipboard.writeText(command);
+      setFeedback(commandCopied);
+    } catch {
+      setFeedback("Couldn’t copy command.");
     }
   }
 
@@ -107,31 +114,48 @@ export function ApiConsole({
       </div>
 
       <div id="response-body" className="response-body">
-        <div hidden={view !== "Preview"}>{children}</div>
         {view === "JSON" && (
-          <pre className="raw-response" tabIndex={0} aria-label="JSON response">
-            <JsonCode value={response} />
-          </pre>
+          <button
+            type="button"
+            className="copy-button floating-copy-button"
+            onClick={copyResponse}
+          >
+            Copy response
+            <CopyIcon copied={feedback === responseCopied} />
+          </button>
         )}
-        {view === "Headers" && (
-          <RequestHeaders inspection={inspection} isLoading={isLoading} />
-        )}
+        <div className="response-scroll">
+          <div hidden={view !== "Preview"}>{children}</div>
+          {view === "JSON" && (
+            <pre className="raw-response" tabIndex={0} aria-label="JSON response">
+              <JsonCode value={response} />
+            </pre>
+          )}
+          {view === "Headers" && (
+            <RequestHeaders inspection={inspection} isLoading={isLoading} />
+          )}
+        </div>
       </div>
 
-      <div className="response-meta">
-        <span role="status">
+      <footer className="response-meta">
+        <span>
           <span className="meta-dot" aria-hidden="true" />
-          {feedback || "application/json"}
+          application/json
         </span>
         <button
+          type="button"
           className="copy-button"
-          onClick={copyResponse}
-          disabled={view === "Headers" && (isLoading || !inspection)}
+          onClick={copyCommand}
+          aria-label={`Copy ${command}`}
+          title={`Copy ${command}`}
         >
-          <CopyIcon copied={feedback === "Copied to clipboard."} />
-          {view === "Headers" ? "Copy headers" : "Copy response"}
+          <code>{command}</code>
+          <CopyIcon copied={feedback === commandCopied} />
         </button>
-      </div>
+      </footer>
+      <span className="sr-only" role="status">
+        {feedback}
+      </span>
     </section>
   );
 }
