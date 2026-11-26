@@ -6,13 +6,10 @@ import {
   type RequestInspection,
 } from "@/lib/request-inspection";
 
-export function useRequestInspection(endpoint: string, enabled: boolean) {
+export function useRequestInspection(endpoint: string) {
   const [inspection, setInspection] = useState<RequestInspection | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    if (!enabled) return;
-
     const controller = new AbortController();
     const url = new URL(endpoint, window.location.origin);
     const referrer = new URL(window.location.pathname, window.location.origin)
@@ -23,27 +20,20 @@ export function useRequestInspection(endpoint: string, enabled: boolean) {
       "Accept-Language": navigator.languages.join(", ") || navigator.language,
       "Cache-Control": "no-cache",
     };
-    const general = [
+    const general = (status: string) => [
       { name: "Request URL", value: url.href },
       { name: "Request method", value: "GET" },
-      { name: "Status code", value: "Loading…" },
+      { name: "Status code", value: status },
       { name: "Remote address", value: "Not exposed by browser APIs" },
       { name: "Referrer policy", value: referrerPolicy },
     ];
-    const pending: RequestInspection = {
-      general,
-      responseHeaders: [],
-      requestHeaders: [
-        ...Object.entries(requestHeaders).map(([name, value]) => ({
-          name,
-          value,
-        })),
-        { name: "Referer", value: referrer },
-      ],
-    };
-
-    setInspection(pending);
-    setIsLoading(true);
+    const displayedRequestHeaders = [
+      ...Object.entries(requestHeaders).map(([name, value]) => ({
+        name,
+        value,
+      })),
+      { name: "Referer", value: referrer },
+    ];
 
     async function inspectRequest() {
       try {
@@ -65,35 +55,26 @@ export function useRequestInspection(endpoint: string, enabled: boolean) {
 
         if (!controller.signal.aborted) {
           setInspection({
-            ...pending,
-            general: general.map((field) =>
-              field.name === "Status code"
-                ? { ...field, value: status }
-                : field,
-            ),
+            general: general(status),
+            requestHeaders: displayedRequestHeaders,
             responseHeaders,
           });
         }
       } catch {
         if (!controller.signal.aborted) {
           setInspection({
-            ...pending,
-            general: general.map((field) =>
-              field.name === "Status code"
-                ? { ...field, value: "Request failed" }
-                : field,
-            ),
+            general: general("Request failed"),
+            requestHeaders: displayedRequestHeaders,
+            responseHeaders: [],
             error: "Couldn’t load live headers. Reopen this tab to try again.",
           });
         }
-      } finally {
-        if (!controller.signal.aborted) setIsLoading(false);
       }
     }
 
     void inspectRequest();
     return () => controller.abort();
-  }, [endpoint, enabled]);
+  }, [endpoint]);
 
-  return { inspection, isLoading };
+  return inspection;
 }

@@ -1,4 +1,5 @@
-import type { HeaderField, RequestInspection } from "@/lib/request-inspection";
+import { useRequestInspection } from "@/components/use-request-inspection";
+import type { HeaderField } from "@/lib/request-inspection";
 
 function HeaderFields({ fields }: { fields: HeaderField[] }) {
   return (
@@ -25,13 +26,9 @@ function HeaderFields({ fields }: { fields: HeaderField[] }) {
   );
 }
 
-export function RequestHeaders({
-  inspection,
-  isLoading,
-}: {
-  inspection: RequestInspection | null;
-  isLoading: boolean;
-}) {
+export function RequestHeaders({ endpoint }: { endpoint: string }) {
+  const inspection = useRequestInspection(endpoint);
+
   if (!inspection)
     return (
       <p className="headers-loading" role="status">
@@ -40,7 +37,7 @@ export function RequestHeaders({
     );
 
   return (
-    <div className="headers-view" aria-busy={isLoading}>
+    <div className="headers-view">
       <details className="header-section" open>
         <summary>General</summary>
         <HeaderFields fields={inspection.general} />
@@ -52,11 +49,7 @@ export function RequestHeaders({
       </details>
       <details className="header-section" open>
         <summary>Response headers</summary>
-        {isLoading ? (
-          <p className="headers-note" role="status">
-            Loading response headers…
-          </p>
-        ) : inspection.responseHeaders.length > 0 ? (
+        {inspection.responseHeaders.length > 0 ? (
           <HeaderFields fields={inspection.responseHeaders} />
         ) : (
           <p className="headers-note">No response headers available.</p>

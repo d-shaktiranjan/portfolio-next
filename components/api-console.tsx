@@ -4,7 +4,6 @@ import { useState, type ReactNode } from "react";
 import type { ApiResponse } from "@/lib/api";
 import { JsonCode } from "@/components/json-code";
 import { RequestHeaders } from "@/components/request-headers";
-import { useRequestInspection } from "@/components/use-request-inspection";
 import { CopyIcon } from "@/components/copy-icon";
 
 type ResponseView = "Preview" | "JSON" | "Headers";
@@ -29,10 +28,6 @@ export function ApiConsole({
   const response =
     initialResponse === null ? "" : JSON.stringify(initialResponse, null, 2);
   const [feedback, setFeedback] = useState("");
-  const { inspection, isLoading } = useRequestInspection(
-    endpoint,
-    view === "Headers",
-  );
 
   async function copyResponse() {
     try {
@@ -120,7 +115,7 @@ export function ApiConsole({
             </pre>
           )}
           {view === "Headers" && (
-            <RequestHeaders inspection={inspection} isLoading={isLoading} />
+            <RequestHeaders key={endpoint} endpoint={endpoint} />
           )}
         </div>
       </div>
