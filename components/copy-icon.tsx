@@ -1,7 +1,7 @@
 export function CopyIcon({ copied = false }: { copied?: boolean }) {
   return (
     <svg
-      className="copy-icon"
+      className="shrink-0"
       width="18"
       height="18"
       viewBox="0 0 24 24"

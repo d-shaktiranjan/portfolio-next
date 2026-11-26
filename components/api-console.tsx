@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
+import { useState, type ComponentProps, type ReactNode } from "react";
 import type { ApiResponse } from "@/lib/api";
 import { JsonCode } from "@/components/json-code";
 import { RequestHeaders } from "@/components/request-headers";
@@ -11,6 +11,31 @@ const views: ResponseView[] = ["Preview", "JSON", "Headers"];
 const command = "npx hi-dev";
 const commandCopied = "Command copied to clipboard.";
 const responseCopied = "Copied to clipboard.";
+
+function CopyButton({
+  copied,
+  floating,
+  children,
+  ...props
+}: Pick<
+  ComponentProps<"button">,
+  "aria-label" | "title" | "onClick" | "children"
+> & {
+  copied: boolean;
+  floating?: boolean;
+}) {
+  return (
+    <button
+      {...props}
+      type="button"
+      data-floating={floating || undefined}
+      className="flex shrink-0 items-center gap-1.75 rounded-sm border border-border-strong bg-surface-soft px-2 py-1 text-[13px] whitespace-nowrap text-foreground hover:border-muted data-floating:absolute data-floating:inset-e-4 data-floating:inset-bs-2 data-floating:z-1 data-floating:font-mono"
+    >
+      {children}
+      <CopyIcon copied={copied} />
+    </button>
+  );
+}
 
 export function ApiConsole({
   endpoint,
@@ -48,25 +73,34 @@ export function ApiConsole({
   }
 
   return (
-    <section className="api-console" aria-label="Shakti’s personal API">
-      <div className="request-bar">
-        <span className="method">GET</span>
+    <section
+      className="flex h-full max-h-full min-h-0 flex-col overflow-hidden rounded-xl border border-border-strong bg-surface shadow-[0_16px_64px_#00000012]"
+      aria-label="Shakti’s personal API"
+    >
+      <div className="flex shrink-0 items-center gap-4.75 border-b border-border py-4 pr-4.5 pl-6 font-mono mobile:gap-3.5 mobile:px-4 mobile:py-3.5">
+        <span className="text-[16px] font-semibold text-accent">GET</span>
         <a
           href={endpoint}
-          className="endpoint"
+          className="text-[17px] hover:text-accent"
           aria-label="Open the raw API response"
         >
           {endpoint}
         </a>
-        <span className="request-format">HTTP/1.1</span>
+        <span className="ml-auto text-[14px] text-muted mobile:hidden">
+          HTTP/1.1
+        </span>
       </div>
 
-      <div className="response-toolbar">
-        <div className="response-views" role="group" aria-label="Response view">
+      <div className="flex shrink-0 flex-wrap items-center justify-between gap-3 border-b border-border px-6 mobile:px-4">
+        <div
+          className="flex gap-5.75 mobile:gap-4.25"
+          role="group"
+          aria-label="Response view"
+        >
           {views.map((item) => (
             <button
               key={item}
-              className={view === item ? "view-button active" : "view-button"}
+              className="border-b-2 border-transparent pt-3.5 pb-3 text-[15px] text-muted hover:text-foreground aria-pressed:border-accent aria-pressed:text-foreground"
               aria-pressed={view === item}
               aria-controls="response-body"
               onClick={() => {
@@ -78,10 +112,11 @@ export function ApiConsole({
             </button>
           ))}
         </div>
-        <div className="response-status">
+        <div className="flex items-center gap-3.5 font-mono text-[14px] mobile:gap-1.75 mobile:text-[13px]">
           <button
             type="button"
-            className={`status ${statusCode === 404 ? "failure" : "success"} status-button`}
+            className="inline-flex items-center gap-1.5 py-1.5 text-success underline-offset-4 hover:underline data-[status=404]:text-failure"
+            data-status={statusCode}
             aria-label={`${status} — View headers`}
             aria-controls="response-body"
             aria-pressed={view === "Headers"}
@@ -90,27 +125,33 @@ export function ApiConsole({
               setFeedback("");
             }}
           >
-            <span className="status-dot" aria-hidden="true" />
+            <span
+              className="size-1.25 rounded-full bg-current"
+              aria-hidden="true"
+            />
             {status}
           </button>
         </div>
       </div>
 
-      <div id="response-body" className="response-body">
+      <div id="response-body" className="relative flex min-h-0 flex-1 flex-col">
         {view === "JSON" && (
-          <button
-            type="button"
-            className="copy-button floating-copy-button"
+          <CopyButton
+            copied={feedback === responseCopied}
+            floating
             onClick={copyResponse}
           >
             Copy response
-            <CopyIcon copied={feedback === responseCopied} />
-          </button>
+          </CopyButton>
         )}
-        <div className="response-scroll">
+        <div className="min-h-0 flex-1 scrollbar-thin [scrollbar-color:var(--color-border-strong)_transparent] overflow-y-auto">
           <div hidden={view !== "Preview"}>{children}</div>
           {view === "JSON" && (
-            <pre className="raw-response" tabIndex={0} aria-label="JSON response">
+            <pre
+              className="px-10 py-8.5 font-mono text-[16px] leading-[1.9] wrap-anywhere whitespace-pre-wrap text-secondary mobile:px-5.5 mobile:py-6 mobile:text-[15px]"
+              tabIndex={0}
+              aria-label="JSON response"
+            >
               <JsonCode value={response} />
             </pre>
           )}
@@ -120,21 +161,19 @@ export function ApiConsole({
         </div>
       </div>
 
-      <footer className="response-meta">
-        <span>
-          <span className="meta-dot" aria-hidden="true" />
+      <footer className="flex shrink-0 items-center justify-between gap-3 border-t border-border px-6 py-3 font-mono text-[13px] text-muted mobile:px-4 mobile:py-2.75">
+        <span className="flex min-w-0 items-center gap-1.75 truncate">
+          <span className="size-1 rounded-full bg-muted" aria-hidden="true" />
           application/json
         </span>
-        <button
-          type="button"
-          className="copy-button"
+        <CopyButton
+          copied={feedback === commandCopied}
           onClick={copyCommand}
           aria-label={`Copy ${command}`}
           title={`Copy ${command}`}
         >
           <code>{command}</code>
-          <CopyIcon copied={feedback === commandCopied} />
-        </button>
+        </CopyButton>
       </footer>
       <span className="sr-only" role="status">
         {feedback}
