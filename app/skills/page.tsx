@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { connection } from "next/server";
 import { ApiConsole } from "@/components/api-console";
 import { ApiWorkspace } from "@/components/api-workspace";
 import { SkillsResponse } from "@/components/skills-response";
@@ -13,9 +12,7 @@ export const metadata: Metadata = createPageMetadata({
     "Node.js, Express.js, and TypeScript are my primary stack. Explore my backend, database, language, and DevOps skills.",
 });
 
-export default async function SkillsPage() {
-  await connection();
-
+export default function SkillsPage() {
   return (
     <ApiWorkspace activeEndpoint="/api/skills">
       <ApiConsole endpoint="/api/skills" initialResponse={skillsApiResponse}>

@@ -22,12 +22,17 @@ export function JsonCode({ value }: { value: string }) {
     if (isKey) kind = "key";
     else if (token.startsWith('"')) kind = "string";
     else if (/^-?\d/.test(token)) kind = "number";
-    else if (token === "true" || token === "false") kind = "boolean";
-    else if (token === "null") kind = "null";
+    else if (token === "true" || token === "false" || token === "null") {
+      kind = "literal";
+    }
 
     tokens.push(value.slice(cursor, index));
     tokens.push(
-      <span className={`json-${kind}`} key={index}>
+      <span
+        className="text-muted data-[token=key]:text-[#efb58c] data-[token=literal]:text-[#c6b0e3] data-[token=number]:text-[#e6c58b] data-[token=string]:text-success"
+        data-token={kind}
+        key={index}
+      >
         {token}
       </span>,
     );

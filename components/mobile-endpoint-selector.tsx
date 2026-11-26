@@ -18,10 +18,11 @@ export function MobileEndpointSelector({
   const router = useRouter();
 
   return (
-    <label className="mobile-endpoint-selector">
+    <label className="hidden items-center justify-between gap-4 rounded-lg border border-border bg-surface px-3.5 text-[14px] text-muted stacked:flex">
       <span>Endpoints</span>
-      <span className="endpoint-select-control">
+      <span className="relative min-w-0">
         <select
+          className="min-h-11 w-full cursor-pointer appearance-none rounded-sm pr-6 pl-2 font-mono text-[16px] text-foreground [&>option]:bg-surface"
           aria-label="Select endpoint"
           value={activeEndpoint}
           onChange={(event) => {
@@ -43,6 +44,7 @@ export function MobileEndpointSelector({
           ))}
         </select>
         <svg
+          className="pointer-events-none absolute top-1/2 right-0 -translate-y-1/2"
           viewBox="0 0 16 16"
           width="14"
           height="14"

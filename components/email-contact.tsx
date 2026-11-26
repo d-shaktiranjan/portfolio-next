@@ -24,9 +24,15 @@ export function EmailContact({ email }: { email: string }) {
   const label = status === "copied" ? "Email copied" : "Copy email address";
 
   return (
-    <div className="email-contact">
-      <a href={`mailto:${email}`}>{email}</a>
+    <div className="flex items-center gap-2.5">
+      <a
+        className="min-w-0 text-[18px] leading-[1.6] wrap-anywhere text-foreground hover:text-accent"
+        href={`mailto:${email}`}
+      >
+        {email}
+      </a>
       <button
+        className="inline-grid size-8 shrink-0 place-items-center rounded-sm text-muted hover:bg-surface-soft hover:text-foreground"
         type="button"
         onClick={copyEmail}
         aria-label={label}
