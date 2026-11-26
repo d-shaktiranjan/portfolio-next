@@ -7,6 +7,8 @@ import {
   type RequestInspection,
 } from "@/lib/request-inspection";
 
+type InspectionSource = RequestInspection | Promise<RequestInspection> | null;
+
 function HeaderSection({
   title,
   children,
@@ -87,29 +89,30 @@ function InspectionValue({
 }
 
 function LiveValue({
-  request,
+  inspection,
   fallback,
   children,
 }: {
-  request: Promise<RequestInspection> | null;
+  inspection: InspectionSource;
   fallback: ReactNode;
   children: (inspection: RequestInspection) => ReactNode;
 }) {
-  if (!request) return fallback;
+  if (!inspection) return fallback;
+  if ("responseHeaders" in inspection) return children(inspection);
 
   return (
     <Suspense fallback={fallback}>
-      <InspectionValue request={request}>{children}</InspectionValue>
+      <InspectionValue request={inspection}>{children}</InspectionValue>
     </Suspense>
   );
 }
 
 export function RequestHeaders({
   endpoint,
-  request,
+  inspection,
 }: {
   endpoint: string | null;
-  request: Promise<RequestInspection> | null;
+  inspection: InspectionSource;
 }) {
   return (
     <div className="px-6 py-7 mobile:px-4.5 mobile:py-6">
@@ -117,7 +120,7 @@ export function RequestHeaders({
         <HeaderFields>
           <HeaderField name="Request URL">
             <LiveValue
-              request={request}
+              inspection={inspection}
               fallback={endpoint ?? <HeaderPlaceholder />}
             >
               {({ url }) => (
@@ -129,7 +132,7 @@ export function RequestHeaders({
           </HeaderField>
           <HeaderField name="Request method">GET</HeaderField>
           <HeaderField name="Status code">
-            <LiveValue request={request} fallback={<HeaderPlaceholder />}>
+            <LiveValue inspection={inspection} fallback={<HeaderPlaceholder />}>
               {({ status, error }) => (
                 <>
                   <span
@@ -156,7 +159,7 @@ export function RequestHeaders({
         </HeaderFields>
       </HeaderSection>
       <HeaderSection title="Response headers">
-        <LiveValue request={request} fallback={<ResponsePlaceholder />}>
+        <LiveValue inspection={inspection} fallback={<ResponsePlaceholder />}>
           {({ responseHeaders }) =>
             responseHeaders.length > 0 ? (
               <HeaderFields>
@@ -183,12 +186,12 @@ export function RequestHeaders({
             {inspectionRequestHeaders["Cache-Control"]}
           </HeaderField>
           <HeaderField name="Accept-Language">
-            <LiveValue request={request} fallback={<HeaderPlaceholder />}>
+            <LiveValue inspection={inspection} fallback={<HeaderPlaceholder />}>
               {({ acceptLanguage }) => acceptLanguage}
             </LiveValue>
           </HeaderField>
           <HeaderField name="Referer">
-            <LiveValue request={request} fallback={<HeaderPlaceholder />}>
+            <LiveValue inspection={inspection} fallback={<HeaderPlaceholder />}>
               {({ referrer }) => referrer}
             </LiveValue>
           </HeaderField>

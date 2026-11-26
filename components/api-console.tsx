@@ -2,6 +2,7 @@
 
 import {
   useEffect,
+  useRef,
   useState,
   type ComponentProps,
   type ReactNode,
@@ -21,13 +22,34 @@ type ViewSelection =
   | { view: "Preview" | "JSON" }
   | {
       view: "Headers";
-      controller: AbortController;
-      request: Promise<RequestInspection>;
+      controller?: AbortController;
+      inspection: RequestInspection | Promise<RequestInspection>;
     };
+type CachedInspection = {
+  endpoint: string | null;
+  expiresAt: number;
+  inspection: RequestInspection;
+};
 const views: ResponseView[] = ["Preview", "JSON", "Headers"];
+const inspectionCacheDurationMs = 30_000;
 const command = "npx hi-dev";
 const commandCopied = "Command copied to clipboard.";
 const responseCopied = "Copied to clipboard.";
+
+function readCachedInspection(
+  cached: CachedInspection | null,
+  endpoint: string | null,
+) {
+  if (
+    cached &&
+    cached.endpoint === endpoint &&
+    cached.inspection.referrer ===
+      window.location.origin + window.location.pathname &&
+    cached.expiresAt > performance.now()
+  ) {
+    return cached.inspection;
+  }
+}
 
 function CopyButton({
   copied,
@@ -68,6 +90,7 @@ export function ApiConsole({
   const [selection, setSelection] = useState<ViewSelection>({
     view: "Preview",
   });
+  const inspectionCache = useRef<CachedInspection | null>(null);
   const { view } = selection;
   const controller = selection.view === "Headers" ? selection.controller : null;
   const response =
@@ -81,11 +104,29 @@ export function ApiConsole({
     if (nextView === view) return;
 
     if (nextView === "Headers") {
+      const cached = readCachedInspection(inspectionCache.current, endpoint);
+      if (cached) {
+        setSelection({ view: nextView, inspection: cached });
+        return;
+      }
+
       const controller = new AbortController();
+      const inspection = inspectRequest(endpoint, controller.signal).then(
+        (result) => {
+          if (!result.error && !controller.signal.aborted) {
+            inspectionCache.current = {
+              endpoint,
+              expiresAt: performance.now() + inspectionCacheDurationMs,
+              inspection: result,
+            };
+          }
+          return result;
+        },
+      );
       setSelection({
         view: nextView,
         controller,
-        request: inspectRequest(endpoint, controller.signal),
+        inspection,
       });
     } else {
       controller?.abort();
@@ -197,7 +238,9 @@ export function ApiConsole({
           <div hidden={view !== "Headers"}>
             <RequestHeaders
               endpoint={endpoint}
-              request={selection.view === "Headers" ? selection.request : null}
+              inspection={
+                selection.view === "Headers" ? selection.inspection : null
+              }
             />
           </div>
         </div>
