@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { connection } from "next/server";
 import { ApiWorkspace } from "@/components/api-workspace";
 import { NotFoundConsole } from "@/components/not-found-console";
 
@@ -10,9 +9,7 @@ export const metadata: Metadata = {
   robots: { index: false, follow: true },
 };
 
-export default async function NotFound() {
-  await connection();
-
+export default function NotFound() {
   return (
     <ApiWorkspace activeEndpoint="">
       <NotFoundConsole>
