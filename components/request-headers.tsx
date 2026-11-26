@@ -1,6 +1,11 @@
-import type { ReactNode } from "react";
-import { useRequestInspection } from "@/components/use-request-inspection";
-import type { HeaderField } from "@/lib/request-inspection";
+"use client";
+
+import { Suspense, use, type ReactNode } from "react";
+import {
+  inspectionReferrerPolicy,
+  inspectionRequestHeaders,
+  type RequestInspection,
+} from "@/lib/request-inspection";
 
 function HeaderSection({
   title,
@@ -22,83 +27,176 @@ function HeaderSection({
   );
 }
 
-function HeaderNote({
+function HeaderField({
+  name,
   children,
-  role,
 }: {
+  name: ReactNode;
   children: ReactNode;
-  role?: "alert";
 }) {
   return (
-    <p className="mt-3.5 text-[12px] leading-[1.7] text-muted" role={role}>
-      {children}
-    </p>
+    <div className="grid grid-cols-[160px_minmax(0,1fr)] items-baseline gap-5 mobile:grid-cols-1 mobile:gap-0.75">
+      <dt className="text-[14px] text-secondary">{name}</dt>
+      <dd className="min-w-0 font-mono text-[13px] leading-[1.8] wrap-anywhere text-muted">
+        {children}
+      </dd>
+    </div>
   );
 }
 
-function HeaderFields({ fields }: { fields: HeaderField[] }) {
+function HeaderFields({ children }: { children: ReactNode }) {
+  return <dl className="grid gap-2.5 mobile:gap-3.5">{children}</dl>;
+}
+
+function HeaderPlaceholder() {
   return (
-    <dl className="grid gap-2.5 mobile:gap-3.5">
-      {fields.map(({ name, value }) => (
-        <div
-          key={name}
-          className="grid grid-cols-[160px_minmax(0,1fr)] items-baseline gap-5 mobile:grid-cols-1 mobile:gap-0.75"
-        >
-          <dt className="text-[14px] text-secondary">{name}</dt>
-          <dd
-            className="min-w-0 font-mono text-[13px] leading-[1.8] wrap-anywhere text-muted data-success:text-success"
-            data-success={
-              (name === "Status code" && value.startsWith("2")) || undefined
-            }
-          >
-            {name === "Request URL" ? (
-              <a className="hover:text-accent" href={value}>
-                {value}
-              </a>
-            ) : (
-              value
-            )}
-          </dd>
-        </div>
-      ))}
-    </dl>
+    <span
+      aria-hidden="true"
+      className="inline-block h-2.5 w-24 max-w-full rounded-sm bg-surface-soft align-middle"
+    />
   );
 }
 
-export function RequestHeaders({ endpoint }: { endpoint: string }) {
-  const inspection = useRequestInspection(endpoint);
-
-  if (!inspection)
-    return (
-      <p
-        className="mt-3.5 px-6 py-7 text-[12px] leading-[1.7] text-muted"
-        role="status"
-      >
-        Loading request details…
+function ResponsePlaceholder() {
+  return (
+    <>
+      <p className="sr-only" role="status">
+        Loading response headers…
       </p>
-    );
+      <div aria-hidden="true">
+        <HeaderFields>
+          {[0, 1, 2, 3].map((row) => (
+            <HeaderField key={row} name={<HeaderPlaceholder />}>
+              <HeaderPlaceholder />
+            </HeaderField>
+          ))}
+        </HeaderFields>
+      </div>
+    </>
+  );
+}
 
+function InspectionValue({
+  request,
+  children,
+}: {
+  request: Promise<RequestInspection>;
+  children: (inspection: RequestInspection) => ReactNode;
+}) {
+  return children(use(request));
+}
+
+function LiveValue({
+  request,
+  fallback,
+  children,
+}: {
+  request: Promise<RequestInspection> | null;
+  fallback: ReactNode;
+  children: (inspection: RequestInspection) => ReactNode;
+}) {
+  if (!request) return fallback;
+
+  return (
+    <Suspense fallback={fallback}>
+      <InspectionValue request={request}>{children}</InspectionValue>
+    </Suspense>
+  );
+}
+
+export function RequestHeaders({
+  endpoint,
+  request,
+}: {
+  endpoint: string | null;
+  request: Promise<RequestInspection> | null;
+}) {
   return (
     <div className="px-6 py-7 mobile:px-4.5 mobile:py-6">
       <HeaderSection title="General">
-        <HeaderFields fields={inspection.general} />
-        {inspection.error && (
-          <HeaderNote role="alert">{inspection.error}</HeaderNote>
-        )}
+        <HeaderFields>
+          <HeaderField name="Request URL">
+            <LiveValue
+              request={request}
+              fallback={endpoint ?? <HeaderPlaceholder />}
+            >
+              {({ url }) => (
+                <a className="hover:text-accent" href={url}>
+                  {url}
+                </a>
+              )}
+            </LiveValue>
+          </HeaderField>
+          <HeaderField name="Request method">GET</HeaderField>
+          <HeaderField name="Status code">
+            <LiveValue request={request} fallback={<HeaderPlaceholder />}>
+              {({ status, error }) => (
+                <>
+                  <span
+                    className="data-success:text-success"
+                    data-success={status.startsWith("2") || undefined}
+                  >
+                    {status}
+                  </span>
+                  {error && (
+                    <p className="mt-1 text-[12px] leading-[1.7]" role="alert">
+                      {error}
+                    </p>
+                  )}
+                </>
+              )}
+            </LiveValue>
+          </HeaderField>
+          <HeaderField name="Remote address">
+            Unavailable in browser APIs
+          </HeaderField>
+          <HeaderField name="Referrer policy">
+            {inspectionReferrerPolicy}
+          </HeaderField>
+        </HeaderFields>
       </HeaderSection>
       <HeaderSection title="Response headers">
-        {inspection.responseHeaders.length > 0 ? (
-          <HeaderFields fields={inspection.responseHeaders} />
-        ) : (
-          <HeaderNote>No response headers available.</HeaderNote>
-        )}
+        <LiveValue request={request} fallback={<ResponsePlaceholder />}>
+          {({ responseHeaders }) =>
+            responseHeaders.length > 0 ? (
+              <HeaderFields>
+                {responseHeaders.map(({ name, value }) => (
+                  <HeaderField key={name} name={name}>
+                    {value}
+                  </HeaderField>
+                ))}
+              </HeaderFields>
+            ) : (
+              <p className="mt-3.5 text-[12px] leading-[1.7] text-muted">
+                No response headers available.
+              </p>
+            )
+          }
+        </LiveValue>
       </HeaderSection>
       <HeaderSection title="Request headers">
-        <HeaderFields fields={inspection.requestHeaders} />
-        <HeaderNote>
+        <HeaderFields>
+          <HeaderField name="Accept">
+            {inspectionRequestHeaders.Accept}
+          </HeaderField>
+          <HeaderField name="Cache-Control">
+            {inspectionRequestHeaders["Cache-Control"]}
+          </HeaderField>
+          <HeaderField name="Accept-Language">
+            <LiveValue request={request} fallback={<HeaderPlaceholder />}>
+              {({ acceptLanguage }) => acceptLanguage}
+            </LiveValue>
+          </HeaderField>
+          <HeaderField name="Referer">
+            <LiveValue request={request} fallback={<HeaderPlaceholder />}>
+              {({ referrer }) => referrer}
+            </LiveValue>
+          </HeaderField>
+        </HeaderFields>
+        <p className="mt-3.5 text-[12px] leading-[1.7] text-muted">
           Selected headers for this GET request. Browser-managed headers are
           omitted.
-        </HeaderNote>
+        </p>
       </HeaderSection>
     </div>
   );

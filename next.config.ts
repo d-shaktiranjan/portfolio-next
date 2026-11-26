@@ -5,8 +5,8 @@ const nextConfig: NextConfig = {
   experimental: {
     agentFeedback: true,
   },
-  // Deliver complete request-time HTML instead of a partial loading shell.
-  cacheComponents: false,
+  cacheComponents: true,
+  partialPrefetching: true,
   headers() {
     return [
       {

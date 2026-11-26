@@ -1,12 +1,29 @@
 "use client";
 
-import { useState, type ComponentProps, type ReactNode } from "react";
+import {
+  useEffect,
+  useState,
+  type ComponentProps,
+  type ReactNode,
+} from "react";
 import type { ApiResponse } from "@/lib/api";
+import {
+  inspectRequest,
+  type RequestInspection,
+} from "@/lib/request-inspection";
 import { JsonCode } from "@/components/json-code";
-import { RequestHeaders } from "@/components/request-headers";
 import { CopyIcon } from "@/components/copy-icon";
+import { CurrentPathLink } from "@/components/current-path-link";
+import { RequestHeaders } from "@/components/request-headers";
 
 type ResponseView = "Preview" | "JSON" | "Headers";
+type ViewSelection =
+  | { view: "Preview" | "JSON" }
+  | {
+      view: "Headers";
+      controller: AbortController;
+      request: Promise<RequestInspection>;
+    };
 const views: ResponseView[] = ["Preview", "JSON", "Headers"];
 const command = "npx hi-dev";
 const commandCopied = "Command copied to clipboard.";
@@ -41,18 +58,40 @@ export function ApiConsole({
   endpoint,
   initialResponse,
   children,
-  statusCode = 200,
 }: {
-  endpoint: string;
+  endpoint: string | null;
   initialResponse: ApiResponse<unknown> | null;
   children: ReactNode;
-  statusCode?: 200 | 404;
 }) {
+  const statusCode = endpoint === null ? 404 : 200;
   const status = statusCode === 404 ? "404 Not Found" : "200 OK";
-  const [view, setView] = useState<ResponseView>("Preview");
+  const [selection, setSelection] = useState<ViewSelection>({
+    view: "Preview",
+  });
+  const { view } = selection;
+  const controller = selection.view === "Headers" ? selection.controller : null;
   const response =
     initialResponse === null ? "" : JSON.stringify(initialResponse, null, 2);
   const [feedback, setFeedback] = useState("");
+
+  useEffect(() => () => controller?.abort(), [controller]);
+
+  function selectView(nextView: ResponseView) {
+    setFeedback("");
+    if (nextView === view) return;
+
+    if (nextView === "Headers") {
+      const controller = new AbortController();
+      setSelection({
+        view: nextView,
+        controller,
+        request: inspectRequest(endpoint, controller.signal),
+      });
+    } else {
+      controller?.abort();
+      setSelection({ view: nextView });
+    }
+  }
 
   async function copyResponse() {
     try {
@@ -79,13 +118,19 @@ export function ApiConsole({
     >
       <div className="flex shrink-0 items-center gap-4.75 border-b border-border py-4 pr-4.5 pl-6 font-mono mobile:gap-3.5 mobile:px-4 mobile:py-3.5">
         <span className="text-[16px] font-semibold text-accent">GET</span>
-        <a
-          href={endpoint}
-          className="text-[17px] hover:text-accent"
-          aria-label="Open the raw API response"
-        >
-          {endpoint}
-        </a>
+        {endpoint === null ? (
+          <span className="text-[17px]">
+            <CurrentPathLink />
+          </span>
+        ) : (
+          <a
+            href={endpoint}
+            className="text-[17px] hover:text-accent"
+            aria-label="Open the raw API response"
+          >
+            {endpoint}
+          </a>
+        )}
         <span className="ml-auto text-[14px] text-muted mobile:hidden">
           HTTP/1.1
         </span>
@@ -103,10 +148,7 @@ export function ApiConsole({
               className="border-b-2 border-transparent pt-3.5 pb-3 text-[15px] text-muted hover:text-foreground aria-pressed:border-accent aria-pressed:text-foreground"
               aria-pressed={view === item}
               aria-controls="response-body"
-              onClick={() => {
-                setView(item);
-                setFeedback("");
-              }}
+              onClick={() => selectView(item)}
             >
               {item}
             </button>
@@ -120,10 +162,7 @@ export function ApiConsole({
             aria-label={`${status} — View headers`}
             aria-controls="response-body"
             aria-pressed={view === "Headers"}
-            onClick={() => {
-              setView("Headers");
-              setFeedback("");
-            }}
+            onClick={() => selectView("Headers")}
           >
             <span
               className="size-1.25 rounded-full bg-current"
@@ -155,9 +194,12 @@ export function ApiConsole({
               <JsonCode value={response} />
             </pre>
           )}
-          {view === "Headers" && (
-            <RequestHeaders key={endpoint} endpoint={endpoint} />
-          )}
+          <div hidden={view !== "Headers"}>
+            <RequestHeaders
+              endpoint={endpoint}
+              request={selection.view === "Headers" ? selection.request : null}
+            />
+          </div>
         </div>
       </div>
 

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ApiWorkspace } from "@/components/api-workspace";
-import { NotFoundConsole } from "@/components/not-found-console";
+import { ApiConsole } from "@/components/api-console";
 
 export const metadata: Metadata = {
   title: "404 · Page not found · Shakti Ranjan Debata",
@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 export default function NotFound() {
   return (
     <ApiWorkspace activeEndpoint="">
-      <NotFoundConsole>
+      <ApiConsole endpoint={null} initialResponse={null}>
         <article className="p-9 mobile:px-5.5 mobile:py-7">
           <p className="mb-4 font-mono text-[13px] text-muted">
             404 / NOT_FOUND
@@ -30,7 +30,7 @@ export default function NotFound() {
             <span aria-hidden="true">←</span> Back to home
           </Link>
         </article>
-      </NotFoundConsole>
+      </ApiConsole>
     </ApiWorkspace>
   );
 }
