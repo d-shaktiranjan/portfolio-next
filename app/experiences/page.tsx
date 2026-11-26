@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { connection } from "next/server";
 import { ApiConsole } from "@/components/api-console";
 import { ApiWorkspace } from "@/components/api-workspace";
 import { ExperiencesResponse } from "@/components/experiences-response";
@@ -13,9 +12,7 @@ export const metadata: Metadata = createPageMetadata({
     "My professional experience as a Backend Developer at GrowthPanda and Associate Software Engineer at Muvi.",
 });
 
-export default async function ExperiencesPage() {
-  await connection();
-
+export default function ExperiencesPage() {
   return (
     <ApiWorkspace activeEndpoint="/api/experiences">
       <ApiConsole

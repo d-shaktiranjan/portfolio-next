@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { connection } from "next/server";
 import { ApiConsole } from "@/components/api-console";
 import { ApiWorkspace } from "@/components/api-workspace";
 import { ProjectsResponse } from "@/components/projects-response";
@@ -13,9 +12,7 @@ export const metadata: Metadata = createPageMetadata({
     "Explore my projects, from Express.js logging middleware to blogging platforms and Python tools.",
 });
 
-export default async function ProjectsPage() {
-  await connection();
-
+export default function ProjectsPage() {
   return (
     <ApiWorkspace activeEndpoint="/api/projects">
       <ApiConsole
